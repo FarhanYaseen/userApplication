@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     lastName: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    hash: DataTypes.STRING,
     createdAt: DataTypes.NOW,
     updatedAt: DataTypes.NOW,
 
