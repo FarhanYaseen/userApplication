@@ -35,6 +35,9 @@ const signIn = async (req, res) => {
       email,
     }
   });
+  if(!user) return res.status(404).send({
+    message: "No User Found"
+  });
 
   const match = await bcrypt.compare(password, user.password);
   if (!match) {

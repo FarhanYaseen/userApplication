@@ -1,72 +1,37 @@
 const Joi = require('joi');
 
+const signUpSchema = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+});
+
+const signInSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+});
+
+const updateSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+});
+
 function validateSignUp(req, res, next) {
-    // create schema object
-    const schema = Joi.object({
-        firstName: Joi.string().required(),
-        lastName: Joi.string().required(),
-        email: Joi.string().email().required(),
-        password: Joi.string().min(6).required(),
-    });
+    return validate(req, res, next, signUpSchema);
 
-    // schema options
-    const options = {
-        abortEarly: false, // include all errors
-        allowUnknown: true, // ignore unknown props
-        stripUnknown: true // remove unknown props
-    };
-
-    // validate request body against schema
-    const { error, value } = schema.validate(req.body, options);
-
-    if (error) {
-        // on fail return comma separated errors
-        next(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
-    } else {
-        // on success replace req.body with validated value and trigger next middleware function
-        req.body = value;
-        next();
-    }
 }
 function validateSignIn(req, res, next) {
-    // create schema object
-    const schema = Joi.object({
-        email: Joi.string().email().required(),
-        password: Joi.string().min(6).required(),
-    });
-
-    // schema options
-    const options = {
-        abortEarly: false, // include all errors
-        allowUnknown: true, // ignore unknown props
-        stripUnknown: true // remove unknown props
-    };
-
-    // validate request body against schema
-    const { error, value } = schema.validate(req.body, options);
-
-    if (error) {
-        // on fail return comma separated errors
-        next(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
-    } else {
-        // on success replace req.body with validated value and trigger next middleware function
-        req.body = value;
-        next();
-    }
+    return validate(req, res, next, signInSchema);
 }
 
 
 function validateUpdate(req, res, next) {
-    const schema = Joi.object()
-        .keys({
-            firstName: Joi.string().optional(),
-            lastName: Joi.string().optional(),
-            email: Joi.string().email().optional(),
-            password: Joi.string().min(6).optional(),
-        })
-        .or('firstName', 'lastName', 'email', 'password') // At least one of these keys must be in the object to be valid.
-        .required()
+    return validate(req, res, next, updateSchema);
+}
 
+
+const validate = (req, res, next, schema) => {
     // schema options
     const options = {
         abortEarly: false, // include all errors
@@ -79,12 +44,16 @@ function validateUpdate(req, res, next) {
 
     if (error) {
         // on fail return comma separated errors
-        next(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
+        const message = `Validation error: ${error.details.map(x => x.message).join(', ')}`;
+        res.status(400).send({
+            message
+        });
     } else {
         // on success replace req.body with validated value and trigger next middleware function
         req.body = value;
         next();
     }
+
 }
 module.exports = {
     validateSignUp,
