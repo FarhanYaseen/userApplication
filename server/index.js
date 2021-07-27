@@ -1,11 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const { secret } = require('./config/auth')
-const bcrypt = require("bcrypt");
-
-const { User } = require('./database/models');
 const app = express();
 
 var corsOptions = {
