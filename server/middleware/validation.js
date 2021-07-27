@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { STATUS_CODES } = require('../constants');
 
 const signUpSchema = Joi.object({
     firstName: Joi.string().required(),
@@ -45,7 +46,7 @@ const validate = (req, res, next, schema) => {
     if (error) {
         // on fail return comma separated errors
         const message = `Validation error: ${error.details.map(x => x.message).join(', ')}`;
-        res.status(400).send({
+        res.status(STATUS_CODES.BAD_REQUEST).json({
             message
         });
     } else {

@@ -2,11 +2,26 @@ const jwt = require("jsonwebtoken");
 const { secret } = require('../config/auth')
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
+const { STATUS_CODES } = require('../constants')
 const { User } = require('../database/models');
 
-const signUp = async (req, res) => {
+const handleInternalServerError = (res) => res
+  .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+  .json({
+    message: "INTERNAL SERVER ERROR"
+  });
 
+const handleNoUserFound = (res) => res
+  .status(STATUS_CODES.NOT_FOUND)
+  .json({ message: "No User found" });
+
+const handleSuccess = (res) => res
+  .status(STATUS_CODES.OK)
+  .json({
+    success: true,
+  });
+
+const signUp = async (req, res) => {
   try {
     const { password, ...otherParams } = req.body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -15,53 +30,50 @@ const signUp = async (req, res) => {
     var token = jwt.sign({ id: user.id }, secret, {
       expiresIn: 86400 // 24 hours
     });
-    return res.status(200).json({
-      ...user.dataValues,
+    return res.status(STATUS_CODES.CREATED).json({
+      user,
       accessToken: token
     });
   }
   catch (err) {
-    console.log(err)
-    return res.status(500).json(err);
+    return handleInternalServerError(res);
   }
 }
 
 const signIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({
+      where: {
+        email,
+      }
+    });
+    if (!user)
+      return handleNoUserFound(res);
 
-  const { email, password } = req.body;
-
-  const user = await User.findOne({
-    where: {
-      email,
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(STATUS_CODES.UNAUTHORIZED).json({
+        message: "Invalid Password!"
+      });
     }
-  });
-  if(!user) return res.status(404).send({
-    message: "No User Found"
-  });
+    var token = jwt.sign({ id: user.id }, secret, {
+      expiresIn: 86400 // 24 hours
+    });
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) {
-    return res.status(401).send({
-      accessToken: null,
-      message: "Invalid Password!"
+    res.status(STATUS_CODES.OK).json({
+      user,
+      accessToken: token
     });
   }
-  var token = jwt.sign({ id: user.id }, secret, {
-    expiresIn: 86400 // 24 hours
-  });
-
-  const { id, firstName, lastName } = user;
-  res.status(200).send({
-    id,
-    firstName,
-    lastName,
-    accessToken: token
-  });
+  catch (err) {
+    return handleInternalServerError(res);
+  }
 }
 
 const getAllUsers = async (req, res) => {
   const users = await User.findAll();
-  return res.status(200).send(users);
+  return res.status(STATUS_CODES.OK).json(users);
 };
 
 const getUser = async (req, res) => {
@@ -71,50 +83,59 @@ const getUser = async (req, res) => {
       id: parseInt(id),
     }
   });
-  if (user)
-    return res.status(200).send(user);
+  if (!user)
+    return handleNoUserFound(res);
 
-  return res.status(404).send("No User found");
+  return res.status(STATUS_CODES.OK).json(user);
+
 };
 
 
 const deleteUser = async (req, res) => {
-  const { id } = req.params;
-  const user = await User.findOne({
-    where: {
-      id: parseInt(id),
-    }
-  });
-  if (!user) {
-    return res.status(404).send("No User found");
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({
+      where: {
+        id: parseInt(id),
+      }
+    });
+    if (!user)
+      return handleNoUserFound(res);
+    user.destroy()
+    return handleSuccess(res);
+  } catch (err) {
+    return handleInternalServerError(res);
   }
-  user.destroy()
-  return res.status(200).send("User has been deleted");
 
 };
 
 const updateUser = async (req, res) => {
   const { password = '', ...otherRequestBody } = req.body;
   const { id } = req.params;
-  const user = await User.findOne({
-    where: {
-      id: parseInt(id),
-    }
-  });
-  if (!user) {
-    return res.status(404).send("No User found");
-  }
-  const userData = {
-    ...user.dataValues,
-    ...otherRequestBody
-  }
-  if (password) {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    userData.password = hashedPassword;
-  }
-  await user.update(userData)
-  return res.status(200).send("User has been Updated");
+  try {
+    const user = await User.findOne({
+      where: {
+        id: parseInt(id),
+      }
+    });
+    if (!user)
+      return handleNoUserFound(res);
 
+    const userData = {
+      ...user.dataValues,
+      ...otherRequestBody
+    }
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      userData.password = hashedPassword;
+    }
+    await user.update(userData)
+    return res.status(STATUS_CODES.OK).json({
+      success: true,
+    });
+  } catch (err) {
+    return handleInternalServerError(res);
+  }
 };
 
 module.exports = {
