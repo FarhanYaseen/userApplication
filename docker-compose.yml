@@ -1,0 +1,36 @@
+version: "3.8"
+
+services: 
+    backend:
+        env_file:
+            "./server/.env"
+        build: 
+            context: ./server
+            dockerfile: ./Dockerfile
+        container_name: doc_container_2
+        ports: 
+            - "8080:8080"
+        depends_on: 
+            - postgres
+    
+    postgres:
+      container_name: postgres
+      image: postgres:12
+      environment:
+        TZ: "${TZ}"
+        PGTZ: "${TZ}"
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: mysql
+        POSTGRES_DB: postgres
+      volumes:
+        - "postgres:/var/lib/postgresql/data"
+      ports:
+        - "5433:5432"
+
+    frontend:
+        build:
+            context: ./client
+            dockerfile: ./Dockerfile
+        container_name: doc_container_1
+        ports: 
+            - "3000:3000"

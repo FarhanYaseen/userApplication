@@ -28,9 +28,11 @@ export default function UserTable() {
   const { token } = useToken();
   const getData = async () => {
     const { data, error: errResponse } = await getUsers(token);
-    if (errResponse) console.log(errResponse);
-    setData(data);
     setLoadingData(false);
+
+    if (!errResponse)
+      setData(data);
+
   }
   const removeUser = async (id) => {
     await deleteUser(id, token);
@@ -41,7 +43,7 @@ export default function UserTable() {
     if (loadingData) {
       getData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const editUser = (id) => history.push(`/edit/${id}`);
   const renderTable = () => (
