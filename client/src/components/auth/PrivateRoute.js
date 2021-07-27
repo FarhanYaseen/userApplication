@@ -3,7 +3,7 @@ import { Route, Redirect } from 'react-router-dom';
 import useToken from './../../useToken';
 
 export default function PrivateRoute({ component: Component, ...rest }) {
-  const { token  } = useToken();
+  const { token } = useToken();
   return (
     <Route
       {...rest}

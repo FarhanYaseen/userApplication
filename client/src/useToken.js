@@ -13,9 +13,11 @@ export default function useToken() {
     localStorage.setItem('token', JSON.stringify(userToken));
     setToken(userToken);
   };
+  const logout = () => localStorage.removeItem('token');
 
   return {
     setToken: saveToken,
-    token
+    token,
+    logout
   }
 }

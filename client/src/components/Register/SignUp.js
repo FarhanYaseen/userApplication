@@ -4,29 +4,13 @@ import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import axios from 'axios';
+
 import './SignUp.css';
+
+import { registerUser } from '../../APIHandler';
 import useToken from './../../useToken';
 
-async function registerUser(credentials) {
-  var config = {
-    method: 'post',
-    url: 'http://localhost:8080/app/signup',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: credentials
-  };
-
-  try {
-    const { data } = await axios(config);
-    const { accessToken } = data;
-    return accessToken;
-  } catch (err) {
-    console.error(err);
-  }
-}
-
+import ErrorBox from '../Error';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,73 +30,73 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 export default function SignUp() {
   const classes = useStyles();
-
+  const { setToken } = useToken();
   const history = useHistory();
+
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
-  const { setToken } = useToken();
-
+  const [error, setError] = useState(null);
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await registerUser({
-      email,
-      password,
-      lastName,
-      firstName,
-    });
-    setToken(token);
+    const { data, error } = await registerUser({ email, password, lastName, firstName, });
+    if (error) {
+      const message = error.response.data.message;
+      return setError(message);
+    }
+    const { accessToken } = data;
+    setToken(accessToken);
+    setError(null);
     history.push("/dashboard")
   }
 
   return (
     <div className="signup-wrapper">
       <form className={classes.root} onSubmit={handleSubmit}>
-      <TextField
-        label="First Name"
-        variant="filled"
-        required
-        value={firstName}
-        onChange={e => setFirstName(e.target.value)}
-      />
-      <TextField
-        label="Last Name"
-        variant="filled"
-        required
-        value={lastName}
-        onChange={e => setLastName(e.target.value)}
-      />
-      <TextField
-        label="Email"
-        variant="filled"
-        type="email"
-        required
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <TextField
-        label="Password"
-        variant="filled"
-        type="password"
-        required
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
+        <TextField
+          label="First Name"
+          variant="filled"
+          required
+          value={firstName || ''}
+          onChange={e => setFirstName(e.target.value)}
+        />
+        <TextField
+          label="Last Name"
+          variant="filled"
+          required
+          value={lastName || ''}
+          onChange={e => setLastName(e.target.value)}
+        />
+        <TextField
+          label="Email"
+          variant="filled"
+          type="email"
+          required
+          value={email || ''}
+          onChange={e => setEmail(e.target.value)}
+        />
+        <TextField
+          label="Password"
+          variant="filled"
+          type="password"
+          required
+          value={password || ''}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <div>
+          <Button type="submit" variant="contained" color="primary">
+            Register
+          </Button>
+        </div>
+      </form>
       <div>
-        <Button type="submit" variant="contained" color="primary">
-          Register
-        </Button>
+        <button onClick={() => history.push("/login")}>Login</button>
       </div>
-    </form>
-      <div>
-         <button onClick={()=> history.push("/login")}>Login</button>
-      </div>
-
+      {error && <ErrorBox error={error} />}
     </div>
   )
 }

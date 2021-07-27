@@ -3,11 +3,12 @@ import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Alert from '@material-ui/lab/Alert';
 import './Login.css';
 import useToken from './../../useToken';
 
-import { loginUser } from '../APIHandler';
+import { loginUser } from '../../APIHandler';
+
+import ErrorBox from '../Error';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -28,7 +29,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function Login() {
   const classes = useStyles();
-
   const history = useHistory();
   const { setToken } = useToken();
 
@@ -36,13 +36,11 @@ export default function Login() {
   const [password, setPassword] = useState();
   const [error, setError] = useState(null);
 
-  const showError = () => <Alert severity="error">{error}</Alert>
-
   const handleSubmit = async e => {
     e.preventDefault();
     const { data, error } = await loginUser({ email, password });
     if (error) {
-      const message = error.response.message;
+      const message = error.response.data.message;
       return setError(message);
     }
     const { accessToken } = data;
@@ -60,7 +58,7 @@ export default function Login() {
           variant="filled"
           type="email"
           required
-          value={email}
+          value={email || ''} 
           onChange={e => setEmail(e.target.value)}
         />
         <TextField
@@ -68,7 +66,7 @@ export default function Login() {
           variant="filled"
           type="password"
           required
-          value={password}
+          value={password || ''}
           onChange={e => setPassword(e.target.value)}
         />
         <div>
@@ -80,7 +78,7 @@ export default function Login() {
       <div>
         <button onClick={() => history.push("/register")}>Register</button>
       </div>
-      {error ? showError() : ""}
+      {error && <ErrorBox error={error}/>}
     </div>
   )
 }

@@ -1,12 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.css';
-import Dashboard from './components/Dashboard/UserDashboard';
+import Dashboard from './components/Dashboard';
 import Login from './components/Login/Login';
 import SignUp from './components/Register/SignUp';
 import Edit from './components/User/Edit';
 import PrivateRoute from './components/auth/PrivateRoute';
-
 
 function App() {
   return (

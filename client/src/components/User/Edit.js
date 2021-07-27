@@ -5,7 +5,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import useToken from './../../useToken';
-import { updateUser, getUserByID } from '../APIHandler';
+import { updateUser, getUserByID } from './../../APIHandler';
+import ErrorBox from '../Error';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,13 +44,15 @@ export default function Edit() {
     const { data, error: errorResponse } = await getUserByID(id, token);
     setLoading(false);
     if (errorResponse) {
-      return setError(errorResponse.response.message);
+      const message = errorResponse.response.data.message;
+      return setError(message);
     }
     const { email, lastName, firstName, password } = data;
     setFirstName(firstName);
     setLastName(lastName);
     setPassword(password);
     setEmail(email);
+    setError(null);
   }
   useEffect(() => {
     if (loading) {
@@ -63,8 +66,10 @@ export default function Edit() {
     e.preventDefault();
     const { error: errorResponse } = await updateUser({ email, password, lastName, firstName, }, id, token);
     if (errorResponse) {
-      return setError(errorResponse.response.message);
+      const message = errorResponse.response.data.message;
+      return setError(message);
     }
+    setError(null);
     return handleClose();
   }
   const renderEdit = () => (
@@ -73,14 +78,14 @@ export default function Edit() {
         label="First Name"
         variant="filled"
         required
-        value={firstName}
+        value={firstName || ''}
         onChange={e => setFirstName(e.target.value)}
       />
       <TextField
         label="Last Name"
         variant="filled"
         required
-        value={lastName}
+        value={lastName || ''}
         onChange={e => setLastName(e.target.value)}
       />
       <TextField
@@ -88,7 +93,7 @@ export default function Edit() {
         variant="filled"
         type="email"
         required
-        value={email}
+        value={email || ''}
         onChange={e => setEmail(e.target.value)}
       />
       <TextField
@@ -96,7 +101,7 @@ export default function Edit() {
         variant="filled"
         type="password"
         required
-        value={password}
+        value={password || ''}
         onChange={e => setPassword(e.target.value)}
       />
       <div>
@@ -112,6 +117,8 @@ export default function Edit() {
   return (
     <div className="signup-wrapper">
       {loading ? "loading" : renderEdit()}
+      {error && <ErrorBox error={error}/>}
+
     </div>
   )
 }

@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,7 +12,7 @@ import { useHistory } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 
 import useToken from '../../useToken';
-import { getUsers, deleteUser } from '../APIHandler';
+import { getUsers, deleteUser } from './../../APIHandler';
 
 const useStyles = makeStyles({
   table: {

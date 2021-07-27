@@ -5,6 +5,17 @@ const config = {
     'Content-Type': 'application/json',
   },
 };
+
+export async function registerUser(requestData) {
+  const loginConfig = {
+    ...config,
+    url: 'app/signup',
+    method: 'post',
+    data: requestData,
+  }
+  return await makeRequest(loginConfig);
+};
+
 export async function loginUser(requestData) {
   const loginConfig = {
     ...config,

@@ -1,10 +1,11 @@
 import React from 'react';
 import Table from '../User/Table';
+import Logout from './Logout'
 export default function Dashboard() {
-  return(
+  return (
     <div>
-          <h2>User Dashboard</h2>
-          <Table />
+      <Logout />
+      <Table />
     </div>
   );
 }
