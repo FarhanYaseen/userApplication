@@ -134,6 +134,14 @@ const updateUser = async (req, res) => {
       success: true,
     });
   } catch (err) {
+    const { name = "" } = err;
+    if (name === "SequelizeUniqueConstraintError")
+      return res
+        .status(STATUS_CODES.CONFLICT)
+        .json({
+          message: "Email is already registered"
+        });
+
     return handleInternalServerError(res);
   }
 };
