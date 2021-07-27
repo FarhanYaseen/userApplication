@@ -1,28 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+
 import axios from 'axios';
+
 import useToken from './../../useToken';
 
-async function registerUser(credentials) {
-  var config = {
-    method: 'post',
-    url: 'http://localhost:8080/app/signup',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: credentials
-  };
 
-  try {
-    const { data } = await axios(config);
-    const { accessToken } = data;
-    return accessToken;
-  } catch (err) {
-    console.error(err);
-  }
-}
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing(2),
+
+    '& .MuiTextField-root': {
+      margin: theme.spacing(1),
+      width: '300px',
+    },
+    '& .MuiButtonBase-root': {
+      margin: theme.spacing(2),
+    },
+  },
+}));
 
 export default function Edit() {
+  const classes = useStyles();
+
   let { id } = useParams();
   const [loading, setLoading] = useState(true);
   const { token } = useToken();
@@ -33,7 +41,7 @@ export default function Edit() {
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
 
-  const updateUser = async (requestBody) =>{
+  const updateUser = async (requestBody) => {
     const config = {
       method: 'put',
       url: `http://localhost:8080/app/users/${id}`,
@@ -44,7 +52,7 @@ export default function Edit() {
       data: requestBody,
 
     };
-     await axios(config);
+    await axios(config);
   }
   const getUserData = async () => {
     const config = {
@@ -69,43 +77,59 @@ export default function Edit() {
     }
   }, []);
 
+  const handleClose = () => history.push("/dashboard");
 
   const handleSubmit = async e => {
     e.preventDefault();
-     await updateUser({
+    await updateUser({
       email,
       password,
       lastName,
       firstName,
     });
-    history.push("/dashboard")
+    return handleClose();
   }
   const renderEdit = () => (
-    <div>
-       <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Email</p>
-          <input type="enail" value={email} onChange={e => setEmail(e.target.value)} />
-        </label>
-        <label>
-          <p>First Name</p>
-          <input type="text" value={firstName} onChange={e => setFirstName(e.target.value)} />
-        </label>
-        <label>
-          <p>Last Name</p>
-          <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} />
-        </label>
-        <label>
-          <p>Password</p>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} />
-        </label>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
-
-    </div>
+    <form className={classes.root} onSubmit={handleSubmit}>
+      <TextField
+        label="First Name"
+        variant="filled"
+        required
+        value={firstName}
+        onChange={e => setFirstName(e.target.value)}
+      />
+      <TextField
+        label="Last Name"
+        variant="filled"
+        required
+        value={lastName}
+        onChange={e => setLastName(e.target.value)}
+      />
+      <TextField
+        label="Email"
+        variant="filled"
+        type="email"
+        required
+        value={email}
+        onChange={e => setEmail(e.target.value)}
+      />
+      <TextField
+        label="Password"
+        variant="filled"
+        type="password"
+        required
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+      />
+      <div>
+        <Button variant="contained" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button type="submit" variant="contained" color="primary">
+          Update
+        </Button>
+      </div>
+    </form>
   );
   return (
     <div className="signup-wrapper">
