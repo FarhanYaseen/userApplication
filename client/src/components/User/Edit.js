@@ -4,11 +4,8 @@ import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-import axios from 'axios';
-
 import useToken from './../../useToken';
-
-
+import { updateUser, getUserByID } from '../APIHandler';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,47 +26,30 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function Edit() {
-  const classes = useStyles();
+  const { id } = useParams();
 
-  let { id } = useParams();
-  const [loading, setLoading] = useState(true);
+  const classes = useStyles();
   const { token } = useToken();
   const history = useHistory();
 
+  const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [firstName, setFirstName] = useState();
   const [lastName, setLastName] = useState();
+  const [error, setError] = useState(null);
 
-  const updateUser = async (requestBody) => {
-    const config = {
-      method: 'put',
-      url: `http://localhost:8080/app/users/${id}`,
-      headers: {
-        'Content-Type': 'application/json',
-        "x-access-token": token,
-      },
-      data: requestBody,
-
-    };
-    await axios(config);
-  }
   const getUserData = async () => {
-    const config = {
-      method: 'get',
-      url: `http://localhost:8080/app/users/${id}`,
-      headers: {
-        'Content-Type': 'application/json',
-        "x-access-token": token,
-      }
-    };
-    const { data } = await axios(config);
+    const { data, error: errorResponse } = await getUserByID(id, token);
+    setLoading(false);
+    if (errorResponse) {
+      return setError(errorResponse.response.message);
+    }
     const { email, lastName, firstName, password } = data;
     setFirstName(firstName);
     setLastName(lastName);
     setPassword(password);
     setEmail(email);
-    setLoading(false);
   }
   useEffect(() => {
     if (loading) {
@@ -81,12 +61,10 @@ export default function Edit() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    await updateUser({
-      email,
-      password,
-      lastName,
-      firstName,
-    });
+    const { error: errorResponse } = await updateUser({ email, password, lastName, firstName, }, id, token);
+    if (errorResponse) {
+      return setError(errorResponse.response.message);
+    }
     return handleClose();
   }
   const renderEdit = () => (

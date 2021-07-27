@@ -13,6 +13,7 @@ import { useHistory } from 'react-router-dom';
 import { Button } from '@material-ui/core';
 
 import useToken from '../../useToken';
+import { getUsers, deleteUser } from '../APIHandler';
 
 const useStyles = makeStyles({
   table: {
@@ -27,30 +28,13 @@ export default function UserTable() {
   const [loadingData, setLoadingData] = useState(true);
   const { token } = useToken();
   const getData = async () => {
-    // const { data } = await 
-
-    const config = {
-      method: 'get',
-      url: 'http://localhost:8080/app/users',
-      headers: {
-        'Content-Type': 'application/json',
-        "x-access-token": token,
-      }
-    };
-    const { data } = await axios(config);
+    const { data, error: errResponse } = await getUsers(token);
+    if (errResponse) console.log(errResponse);
     setData(data);
     setLoadingData(false);
   }
-  const deleteUser = async (id) => {
-    const config = {
-      method: 'delete',
-      url: `http://localhost:8080/app/users/${id}`,
-      headers: {
-        'Content-Type': 'application/json',
-        "x-access-token": token,
-      }
-    };
-    await axios(config);
+  const removeUser = async (id) => {
+    await deleteUser(id, token);
     await getData();
   }
 
@@ -83,7 +67,7 @@ export default function UserTable() {
                   <Button variant="contained" color="primary" onClick={() => editUser(id)} > Edit</Button>
                 </TableCell>
                 <TableCell >
-                  <Button variant="contained" color="secondary" onClick={async () => await deleteUser(id)}>Delete</Button>
+                  <Button variant="contained" color="secondary" onClick={async () => await removeUser(id)}>Delete</Button>
                 </TableCell>
               </TableRow>
             ))}

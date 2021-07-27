@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
-
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert';
-
 import './Login.css';
 import useToken from './../../useToken';
 
-
+import { loginUser } from '../APIHandler';
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -41,39 +38,17 @@ export default function Login() {
 
   const showError = () => <Alert severity="error">{error}</Alert>
 
-
-  async function loginUser(credentials) {
-    var config = {
-      method: 'post',
-      url: 'http://localhost:8080/app/signin',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: credentials
-    };
-
-    try {
-      const { data } = await axios(config);
-      const { accessToken } = data;
-      setError(null);
-
-      return accessToken;
-    } catch (err) {
-      const { message } = err.response.data;
-      console.log(err.response);
-      setError(message);
-    }
-  }
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
-      email,
-      password
-    });
-    if (token) {
-      setToken(token);
-      history.push("/dashboard")
+    const { data, error } = await loginUser({ email, password });
+    if (error) {
+      const message = error.response.message;
+      return setError(message);
     }
+    const { accessToken } = data;
+    setToken(accessToken);
+    setError(null);
+    return history.push("/dashboard")
   }
 
   return (
@@ -106,7 +81,6 @@ export default function Login() {
         <button onClick={() => history.push("/register")}>Register</button>
       </div>
       {error ? showError() : ""}
-
     </div>
   )
 }

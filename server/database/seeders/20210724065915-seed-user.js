@@ -8,49 +8,49 @@ module.exports = {
     return queryInterface.bulkInsert('Users', [
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se1@gmail.com'
       },
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se2@gmail.com'
       },
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se3@gmail.com'
       },
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se4@gmail.com'
       },
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se5@gmail.com'
       },
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se6@gmail.com'
       },
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se7@gmail.com'
       },
       {
         firstName: 'Farhan',
-        lastName: 'Yaseeb',
+        lastName: 'Yaseen',
         password: hashedPassword,
         email: 'farhan.yaseen.se8@gmail.com'
       },
