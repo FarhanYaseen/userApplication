@@ -41,6 +41,7 @@ export default function UserTable() {
     if (loadingData) {
       getData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const editUser = (id) => history.push(`/edit/${id}`);
   const renderTable = () => (

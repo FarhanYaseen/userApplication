@@ -58,6 +58,7 @@ export default function Edit() {
     if (loading) {
       getUserData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClose = () => history.push("/dashboard");
