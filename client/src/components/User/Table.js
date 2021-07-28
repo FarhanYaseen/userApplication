@@ -27,12 +27,11 @@ export default function UserTable() {
   const [loadingData, setLoadingData] = useState(true);
   const { token } = useToken();
   const getData = async () => {
-    const { data, error: errResponse } = await getUsers(token);
+    const { data = [], error: errResponse } = await getUsers(token);
     setLoadingData(false);
 
     if (!errResponse)
       setData(data);
-
   }
   const removeUser = async (id) => {
     await deleteUser(id, token);

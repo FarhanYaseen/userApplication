@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 
 import './SignUp.css';
 
@@ -56,6 +57,7 @@ export default function SignUp() {
 
   return (
     <div className="signup-wrapper">
+      <h1>Register</h1>
       <form className={classes.root} onSubmit={handleSubmit}>
         <TextField
           label="First Name"
@@ -94,7 +96,13 @@ export default function SignUp() {
         </div>
       </form>
       <div>
-        <button onClick={() => history.push("/login")}>Login</button>
+        <Link
+          component="button"
+          variant="body2"
+          onClick={() => history.push("/login")}
+        >
+          {`login?`}
+        </Link>
       </div>
       {error && <ErrorBox error={error} />}
     </div>

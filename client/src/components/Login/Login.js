@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 import './Login.css';
 import useToken from './../../useToken';
 
@@ -58,7 +59,7 @@ export default function Login() {
           variant="filled"
           type="email"
           required
-          value={email || ''} 
+          value={email || ''}
           onChange={e => setEmail(e.target.value)}
         />
         <TextField
@@ -76,9 +77,15 @@ export default function Login() {
         </div>
       </form>
       <div>
-        <button onClick={() => history.push("/register")}>Register</button>
+        <Link
+          component="button"
+          variant="body2"
+          onClick={() => history.push("/register")}
+        >
+          {`Register?`}
+        </Link>
       </div>
-      {error && <ErrorBox error={error}/>}
+      {error && <ErrorBox error={error} />}
     </div>
   )
 }

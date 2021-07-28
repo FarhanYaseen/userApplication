@@ -2,9 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
+const CLIENT_PORT = process.env.CLIENT_PORT || 3000;
 
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: `http://localhost:${CLIENT_PORT}`
 };
 
 app.use(cors(corsOptions));

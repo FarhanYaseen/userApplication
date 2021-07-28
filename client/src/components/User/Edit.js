@@ -117,6 +117,7 @@ export default function Edit() {
   );
   return (
     <div className="signup-wrapper">
+      <h1>Edit User Info</h1>
       {loading ? "loading" : renderEdit()}
       {error && <ErrorBox error={error}/>}
 
