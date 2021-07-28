@@ -24,11 +24,17 @@ This Project contains `React` frond end and `Node` back end.
 ### Executing program
 
 * How to run the program
-* Step-by-step bullets
 ```
-docker-compose up
+docker-compose up --build -d
 ```
+* How to stop the program
 
+```
+docker-compose down -v
+```
+### Open Application
+
+Open the application useing this  [Link](http://localhost:3000)
 
 ## Authors
 
