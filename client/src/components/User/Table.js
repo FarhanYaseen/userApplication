@@ -25,13 +25,18 @@ export default function UserTable() {
   const history = useHistory();
   const [data, setData] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
-  const { token } = useToken();
+  const { token, logout } = useToken();
   const getData = async () => {
     const { data = [], error: errResponse } = await getUsers(token);
     setLoadingData(false);
-
-    if (!errResponse)
+    if (!Array.isArray(data) || !data.length) {
+        // If no user found logout
+        logout();
+        return history.push("/login")
+    }
+    if (!errResponse) {
       setData(data);
+    }
   }
   const removeUser = async (id) => {
     await deleteUser(id, token);

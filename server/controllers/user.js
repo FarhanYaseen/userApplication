@@ -5,6 +5,8 @@ const saltRounds = 10;
 const { STATUS_CODES } = require('../constants')
 const { User } = require('../database/models');
 
+const { expiresIn } = require('../config/auth');
+
 const handleInternalServerError = (res) => res
   .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
   .json({
@@ -28,7 +30,7 @@ const signUp = async (req, res) => {
     const userData = { password: hashedPassword, ...otherParams };
     const user = await User.create(userData);
     var token = jwt.sign({ id: user.id }, secret, {
-      expiresIn: 86400 // 24 hours
+      expiresIn,
     });
     return res.status(STATUS_CODES.CREATED).json({
       user,
@@ -58,7 +60,7 @@ const signIn = async (req, res) => {
       });
     }
     var token = jwt.sign({ id: user.id }, secret, {
-      expiresIn: 86400 // 24 hours
+      expiresIn,
     });
 
     res.status(STATUS_CODES.OK).json({
