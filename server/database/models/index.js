@@ -9,7 +9,11 @@ const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
 let sequelize;
-if (config.use_env_variable) {
+if (process.env.DATABASE_URL) {
+  console.log("process.env.DATABASE_URL", process.env.DATABASE_URL)
+  sequelize = new Sequelize(process.env.DATABASE_URL);
+}
+else if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
@@ -30,6 +34,13 @@ Object.keys(db).forEach(modelName => {
     db[modelName].associate(db);
   }
 });
+
+function seqAsync() {
+  sequelize.sync()
+    .then(() => console.log('Database sycned successfully!'))
+    .catch(err => console.log('Error', err));
+}
+setTimeout(function () { seqAsync(); }, 5 * 1000);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

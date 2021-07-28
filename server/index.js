@@ -26,7 +26,7 @@ const appRoute = require('./routes')
 app.use('/app', appRoute)
 
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 9000;
 app.listen(PORT, () => {
   console.log(`App is now running at port http://localhost:${PORT}`)
 });
