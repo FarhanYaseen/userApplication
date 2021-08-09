@@ -40,6 +40,7 @@ function seqAsync() {
     .then(() => console.log('Database sycned successfully!'))
     .catch(err => console.log('Error', err));
 }
+// Sync After 5 Second
 setTimeout(function () { seqAsync(); }, 5 * 1000);
 
 db.sequelize = sequelize;
