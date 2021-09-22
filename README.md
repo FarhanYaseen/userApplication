@@ -10,16 +10,15 @@ To run this project locally you should have install `docker` and `docker-compose
 
 ## Technology stack
 
-* docker  
-* node.js  
-* react  
-* sequelize.js 
+* Docker  
+* Node 
+* React  
+* Sequelize 
 * REST API
 
 ### Dependencies
 
 * docker and docker-compose
-
 
 
 ### Executing program
