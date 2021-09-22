@@ -15,6 +15,7 @@ To run this project locally you should have install `docker` and `docker-compose
 * React  
 * Sequelize 
 * REST API
+* Postgres
 
 ### Dependencies
 
